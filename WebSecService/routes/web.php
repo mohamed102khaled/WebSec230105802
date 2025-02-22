@@ -22,4 +22,3 @@ Route::get('/even', function () {
 Route::get('/prime', function () {
     return view('prime'); //prime.blade.php
 });
-    
