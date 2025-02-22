@@ -1,37 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap Test</title>
-    <link href="public/css/bootstrap.min.css" rel="stylesheet">
-    <script src="public/js/bootstrap.bundle.min.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bootstrap Test</title>
+<link href="public/css/bootstrap.min.css" rel="stylesheet">
+<script src="public/js/bootstrap.bundle.min.js"></script>
 </head>
-<?php
-  function isPrime($number) {
-    if($number<=1) return false;
-    $i = $number - 1;
-    while($i>1) {
-     if($number%$i==0) return false;
-      $i--;
-    }
-    return true;
-  }
-?>
 <body>
-<div class="card m-4">
-  <div class="card-header">Prime Numbers</div>
-  <div class="card-body">
-    @foreach (range(1, 100) as $i)
-      @if(isPrime($i))
-        <span class="badge bg-primary">{{$i}}</span>  
-      @else
-        <span class="badge bg-secondary">{{$i}}</span>  
-      @endif
-    @endforeach
-  </div>
-</div>
-</body>
-  
-</html>
 
+    <div class="card m-4">
+    <div class="card-header">Basic Web Page with Bootstrap</div>
+    <div class="card-body">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</div>
+    <button type="button" class="btn btn-success">Success</button>
+    </div>
+
+
+</body>
+</html>
