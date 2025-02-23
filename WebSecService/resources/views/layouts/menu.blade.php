@@ -23,6 +23,9 @@
 <li class="nav-item">
 <a class="nav-link" href="./bill">bill</a>
 </li>
+<li class="nav-item">
+<a class="nav-link" href="./transcript">transcript</a>
+</li>
 </ul>
 </div>
 </nav>

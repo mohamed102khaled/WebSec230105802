@@ -27,6 +27,9 @@ Route::get('/bill', function () {
     return view('bill'); //prime.blade.php
 });
 
+Route::get('/transcript', function () {
+    return view('transcript'); //prime.blade.php
+});
 
 
 Route::get('/bill', function () {
@@ -45,3 +48,17 @@ Route::get('/bill', function () {
     return view('bill', compact('customer_name', 'order_date', 'items', 'total_amount'));
 });
 
+Route::get('/transcript', function () {
+    $student_name = 'Jane Doe';
+    $student_id = '123456';
+    $semester = 'Fall 2024';
+
+    $courses = [
+        ['course' => 'Mathematics', 'code' => 'MATH101', 'credits' => 3, 'grade' => 'A'],
+        ['course' => 'Physics', 'code' => 'PHYS102', 'credits' => 4, 'grade' => 'B+'],
+        ['course' => 'Computer Science', 'code' => 'CS103', 'credits' => 3, 'grade' => 'A-'],
+        ['course' => 'History', 'code' => 'HIST104', 'credits' => 2, 'grade' => 'B'],
+    ];
+
+    return view('transcript', compact('student_name', 'student_id', 'semester', 'courses'));
+});
