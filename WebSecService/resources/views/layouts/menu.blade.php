@@ -20,6 +20,9 @@
 <li class="nav-item">
 <a class="nav-link" href="./text">text</a>
 </li>
+<li class="nav-item">
+<a class="nav-link" href="./bill">bill</a>
+</li>
 </ul>
 </div>
 </nav>
