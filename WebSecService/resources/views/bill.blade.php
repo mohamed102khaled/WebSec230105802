@@ -15,7 +15,7 @@
                     <tr>
                         <th>#</th>
                         <th>Item Name</th>
-                        <th>Description</th>
+                        
                         <th>Quantity</th>
                         <th>Price</th>
                         <th>Total</th>
@@ -26,7 +26,7 @@
                         <tr>
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $item['name'] }}</td>
-                            <td>{{ $item['description'] }}</td>
+                        
                             <td>{{ $item['quantity'] }}</td>
                             <td>${{ number_format($item['price'], 2) }}</td>
                             <td>${{ number_format($item['quantity'] * $item['price'], 2) }}</td>
@@ -35,7 +35,7 @@
                 </tbody>
             </table>
             
-            <h4 class="text-right">Grand Total: ${{ number_format($total_amount, 2) }}</h4>
+            <h4 class="text-right"> Total: ${{ number_format($total_amount, 2) }}</h4>
         </div>
         
     </div>

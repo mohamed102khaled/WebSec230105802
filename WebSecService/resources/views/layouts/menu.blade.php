@@ -20,12 +20,15 @@
 <li class="nav-item">
 <a class="nav-link" href="./text">text</a>
 </li>
-<li class="nav-item">
+ <li class="nav-item">
 <a class="nav-link" href="./bill">bill</a>
-</li>
+</li> 
 <li class="nav-item">
 <a class="nav-link" href="./transcript">transcript</a>
-</li>
+</li> 
+<li class="nav-item">
+<a class="nav-link" href="./products"> products list</a>
+</li> 
 </ul>
 </div>
 </nav>

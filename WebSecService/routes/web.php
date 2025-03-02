@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Web\ProductsController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -31,25 +32,31 @@ Route::get('/transcript', function () {
     return view('transcript'); //prime.blade.php
 });
 
+Route::get('products', [ProductsController::class, 'list'])->name('products_list');
+
+Route::get('products/edit/{product?}', [ProductsController::class, 'edit'])->name('products_add');
+
+Route::post('products/save/{product?}', [ProductsController::class, 'save'])->name('products_save');
+
+Route::get('products/delete/{product}', [ProductsController::class, 'delete'])->name('products_delete');
 
 Route::get('/bill', function () {
-    $customer_name = 'John Doe';
+    $customer_name = 'mohamed khaled';
     $order_date = now()->toDateString();
 
     $items = [
-        ['name' => 'Apple', 'description' => 'Fresh Red Apple', 'quantity' => 3, 'price' => 1.50],
-        ['name' => 'Bread', 'description' => 'Whole Wheat Bread', 'quantity' => 2, 'price' => 2.00],
-        ['name' => 'Milk', 'description' => '1L Skimmed Milk', 'quantity' => 1, 'price' => 3.00],
-        ['name' => 'Eggs', 'description' => 'Pack of 12 Eggs', 'quantity' => 1, 'price' => 4.50],
+        ['name' => 'tea',  'quantity' => 1, 'price' => 12.50],
+        ['name' => 'jam', 'quantity' => 3, 'price' => 32.00],
+        ['name' => 'banana',  'quantity' => 5, 'price' => 2.20],
+        ['name' => 'rice', 'quantity' => 2, 'price' => 15.75],
     ];
 
     $total_amount = array_sum(array_map(fn($item) => $item['quantity'] * $item['price'], $items));
 
     return view('bill', compact('customer_name', 'order_date', 'items', 'total_amount'));
 });
-
 Route::get('/transcript', function () {
-    $student_name = 'Jane Doe';
+    $student_name = 'mohamed khaled';
     $student_id = '123456';
     $semester = 'Fall 2024';
 
