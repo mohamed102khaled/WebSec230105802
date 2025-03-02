@@ -29,6 +29,15 @@
 <li class="nav-item">
 <a class="nav-link" href="./products"> products list</a>
 </li> 
+<li class="nav-item">
+<a class="nav-link" href="./users"> users</a>
+</li> 
+<li class="nav-item">
+<a class="nav-link" href="./grades"> grades</a>
+</li> 
+<li class="nav-item">
+<a class="nav-link" href="./exam"> exam</a>
+</li> 
 </ul>
 </div>
 </nav>

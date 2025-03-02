@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Web\ProductsController;
+use App\Http\Controllers\Web\UserController;
+use App\Http\Controllers\Web\GradeController;
+use App\Http\Controllers\Web\ExamController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -33,12 +36,35 @@ Route::get('/transcript', function () {
 });
 
 Route::get('products', [ProductsController::class, 'list'])->name('products_list');
-
 Route::get('products/edit/{product?}', [ProductsController::class, 'edit'])->name('products_add');
-
 Route::post('products/save/{product?}', [ProductsController::class, 'save'])->name('products_save');
-
 Route::get('products/delete/{product}', [ProductsController::class, 'delete'])->name('products_delete');
+
+Route::get('/users', [UserController::class, 'list'])->name('users_list');
+Route::get('/users/add', [UserController::class, 'edit'])->name('users_add');
+Route::get('/users/edit/{user}', [UserController::class, 'edit'])->name('users_edit');
+Route::post('/users/save/{user?}', [UserController::class, 'save'])->name('users_save');
+Route::get('/users/delete/{user}', [UserController::class, 'delete'])->name('users_delete');
+
+Route::get('/grades', [GradeController::class, 'list'])->name('grades_list');
+Route::get('/grades/add', [GradeController::class, 'edit'])->name('grades_add');
+Route::get('/grades/edit/{grade}', [GradeController::class, 'edit'])->name('grades_edit');
+Route::post('/grades/save/{grade?}', [GradeController::class, 'save'])->name('grades_save');
+Route::get('/grades/delete/{grade}', [GradeController::class, 'delete'])->name('grades_delete');
+
+Route::get('/exam', function () {
+    return view('exam.main');
+})->name('exam_main');
+
+Route::get('/exam/questions', [ExamController::class, 'manageQuestions'])->name('exam_manage_questions');
+Route::get('/exam/question/add', [ExamController::class, 'editQuestion'])->name('exam_add_question');
+Route::get('/exam/question/edit/{question}', [ExamController::class, 'editQuestion'])->name('exam_edit_question');
+Route::post('/exam/question/save/{question?}', [ExamController::class, 'saveQuestion'])->name('exam_save_question');
+Route::get('/exam/question/delete/{question}', [ExamController::class, 'deleteQuestion'])->name('exam_delete_question');
+
+Route::get('/exam/start', [ExamController::class, 'startExam'])->name('exam_start');
+Route::post('/exam/submit', [ExamController::class, 'submitExam'])->name('exam_submit');
+
 
 Route::get('/bill', function () {
     $customer_name = 'mohamed khaled';
