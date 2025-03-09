@@ -60,11 +60,6 @@ class UsersController extends Controller
             return back()->with('error', 'User not found.');
         }
 
-        // Check if the password is correctly hashed
-        // if (!Hash::check($request->password, $user->password)) {
-        //     return back()->with('error', 'Incorrect password.');
-        // }
-
         // Authenticate and log in user
         Auth::login($user);
 
