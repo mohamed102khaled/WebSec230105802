@@ -1,9 +1,10 @@
 @extends('layouts.master')
-@section('title', 'Add/Edit User')
+@section('title', 'User Registration')
 @section('content')
 
 <div class="container mt-5">
-<form action="{{ route('users_save') }}" method="POST">
+    <h2>Register</h2>
+    <form action="{{ route('users_save') }}" method="POST">
     @csrf
 
     <div class="form-group mb-2">
@@ -54,6 +55,14 @@
     <button type="submit" class="btn btn-primary">Add User</button>
 </form>
 
+
+
+    {{-- Display errors --}}
+    @if(session('error'))
+        <div class="alert alert-danger mt-3">
+            <strong>Error!</strong> {{ session('error') }}
+        </div>
+    @endif
 </div>
 
 @endsection

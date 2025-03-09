@@ -61,7 +61,6 @@ Route::get('products/delete/{product}', [ProductsController::class, 'delete'])->
 
 Route::get('/users', [UserController::class, 'list'])->name('users_list');
 Route::get('/users/add', [UserController::class, 'edit'])->name('users_add');
-Route::post('/register', [UsersController::class, 'doRegister'])->name('do_register');
 Route::get('/users/edit/{user}', [UsersController::class, 'edit'])->name('users_edit');
 Route::post('/users/save/{user?}', [UsersController::class, 'save'])->name('users_save');
 Route::get('/users/delete/{user}', [UserController::class, 'delete'])->name('users_delete');
