@@ -17,19 +17,31 @@
          return view("products.add", compact('product'));
      }
  
-     public function save(Request $request, Product $product = null) {
-        $this->validate($request, [
-            'code' => ['required', 'string', 'max:32'],
-            'name' => ['required', 'string', 'max:128'],
-            'model' => ['required', 'string', 'max:256'],
-            'description' => ['required', 'string', 'max:1024'],
-            'price' => ['required', 'numeric'],
+     public function save(Request $request, Product $product = null)
+    {
+        // ✅ Use $request->validate(), NOT $this->validate()
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'code' => 'required|string|unique:products,code,' . ($product ? $product->id : 'NULL'),
+            'model' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'photo' => 'nullable|string',
+            'description' => 'nullable|string',
         ]);
-        $product = $product??new Product();
-        $product->fill($request->all());
+
+        // If updating, keep the existing product; otherwise, create a new one
+        $product = $product ?? new Product();
+        $product->name = $request->name;
+        $product->code = $request->code;
+        $product->model = $request->model;
+        $product->price = $request->price;
+        $product->photo = $request->photo;
+        $product->description = $request->description;
+
         $product->save();
-        return redirect()->route('products_list');
-     }
+
+        return redirect()->route('products_list')->with('success', 'Product saved successfully.');
+    }
  
      public function delete(Product $product) {
          $product->delete();
