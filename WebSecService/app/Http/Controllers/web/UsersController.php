@@ -20,26 +20,25 @@ class UsersController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
+            'role' => 'required|in:admin,user', // ✅ Ensure role is required
             'security_question' => 'nullable|string',
             'security_answer' => 'nullable|string',
             'password' => 'required|confirmed|min:8',
         ]);
 
-        try {
-            $user = new User();
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->security_question = $request->security_question ?? null;
-            $user->security_answer = $request->filled('security_answer') ? Hash::make($request->security_answer) : null;
-            $user->password = Hash::make($request->password);
-            $user->role = 'user';
-            $user->save();
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->role = $request->role; // ✅ Save role
+        $user->security_question = $request->security_question ?? null;
+        $user->security_answer = $request->security_answer ? Hash::make($request->security_answer) : null;
+        $user->password = Hash::make($request->password);
 
-            return redirect('/login')->with('success', 'Registration successful! You can now log in.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Error during saving: ' . $e->getMessage());
-        }
+        $user->save();
+
+        return redirect('/login')->with('success', 'Registration successful! You can now log in.');
     }
+
 
     public function login()
     {
