@@ -5,9 +5,12 @@
     <div class="col col-10">
         <h1>Products</h1>
     </div>
-    <div class="col col-2">
-        <a href="{{ route('products_add') }}" class="btn btn-success form-control">Add Product</a>
-    </div>
+
+    @if(Auth::user() && Auth::user()->role === 'admin')
+        <div class="col col-2">
+            <a href="{{ route('products_add') }}" class="btn btn-success form-control">Add Product</a>
+        </div>
+    @endif
 </div>
 
 <div class="container mt-4">
@@ -55,12 +58,14 @@
                 </div>
                 <div class="col col-sm-12 col-lg-8 mt-3">
                     <h3>{{ $product->name }}</h3>
-                    <div class="col col-2">
-                        <a href="{{ route('products_add', $product->id) }}" class="btn btn-success form-control">Edit</a>
-                    </div>
-                    <div class="col col-2">
-                        <a href="{{ route('products_delete', $product->id) }}" class="btn btn-danger form-control">Delete</a>
-                    </div>
+                    @if(Auth::user() && Auth::user()->role === 'admin')
+                        <div class="col col-2">
+                            <a href="{{ route('products_add', $product->id) }}" class="btn btn-success form-control">Edit</a>
+                        </div>
+                        <div class="col col-2">
+                            <a href="{{ route('products_delete', $product->id) }}" class="btn btn-danger form-control">Delete</a>
+                        </div>
+                    @endif
                     <table class="table table-striped">
                         <tr><th width="20%">Name</th><td>{{ $product->name }}</td></tr>
                         <tr><th>Model</th><td>{{ $product->model }}</td></tr>
