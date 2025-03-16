@@ -24,6 +24,7 @@
                     <option value="" {{ request()->role == "" ? "selected" : "" }} disabled>Filter by Role</option>
                     <option value="admin" {{ request()->role == "admin" ? "selected" : "" }}>Admin</option>
                     <option value="user" {{ request()->role == "user" ? "selected" : "" }}>User</option>
+                    <option value="user" {{ request()->role == "Employee" ? "selected" : "" }}>Employee</option>
                 </select>
             </div>
             <div class="col col-sm-2">

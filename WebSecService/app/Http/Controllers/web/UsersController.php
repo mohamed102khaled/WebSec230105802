@@ -173,7 +173,6 @@ public function save(Request $request, User $user = null)
     $request->validate([
         'name' => 'required|string|max:255',
         'email' => 'required|email|unique:users,email,' . ($user ? $user->id : 'NULL'),
-        'role' => 'required|in:user,admin',
         'security_question' => 'nullable|string',
         'security_answer' => 'nullable|string',
         'password' => $user ? 'nullable|min:8' : 'required|min:8|confirmed',
@@ -183,8 +182,9 @@ public function save(Request $request, User $user = null)
     $user->name = $request->name;
     $user->email = $request->email;
 
-    if (auth()->user()->hasPermissionTo('edit_users')) {
-        $user->role = $request->role;
+    // Role update logic: Only allow admins to change roles
+    if (auth()->user()->can('edit_users') && $request->filled('roles')) {
+        $user->syncRoles($request->roles);
     }
 
     $user->security_question = $request->security_question ?? null;
@@ -202,15 +202,11 @@ public function save(Request $request, User $user = null)
     $user->save();
 
     if (auth()->user()->hasPermissionTo('edit_users')) {
-        $user->syncRoles([$request->role]);
         $user->syncPermissions($request->permissions ?? []);
     }
 
     return redirect()->route('users_edit', $user->id)->with('success', 'User updated successfully.');
 }
-
-
-
 
 
     public function delete(User $user)

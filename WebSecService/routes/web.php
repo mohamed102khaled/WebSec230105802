@@ -7,6 +7,12 @@ use App\Http\Controllers\Web\UserController;
 use App\Http\Controllers\Web\GradeController;
 use App\Http\Controllers\Web\ExamController;
 use App\Http\Controllers\Web\UsersController;
+use App\Http\Controllers\BookController;
+
+Route::middleware(['auth'])->group(function () {
+    Route::resource('books', BookController::class)->only(['index', 'create', 'store']);
+});
+
 
 Route::get('/', function () {
     return view('welcome');

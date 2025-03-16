@@ -27,6 +27,12 @@
 <li class="nav-item">
 <a class="nav-link" href="./products"> products list</a>
 </li> 
+
+<li class="nav-item">
+    <a class="nav-link" href="./books">Books</a>
+</li>
+
+
 @auth
     @if(Auth::user()->isAdmin())
         <li class="nav-item">

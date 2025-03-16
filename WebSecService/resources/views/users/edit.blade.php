@@ -10,7 +10,6 @@
         </div>
     @endif
 
-
     @if($errors->any())
         <div class="alert alert-danger">
             <ul>
@@ -34,12 +33,12 @@
             <input type="email" class="form-control" name="email" value="{{ old('email', $user->email ?? '') }}" required>
         </div>
 
+        {{-- Display the current role saved in the database --}}
         <div class="form-group mb-2">
-            <label class="form-label">Role:</label>
-            <input type="text" class="form-control" value="{{ ucfirst($user->role ?? 'User') }}" disabled>
-            <input type="hidden" name="role" value="{{ $user->role ?? 'user' }}">
+            <label class="form-label">Current Role:</label>
+            <input type="text" class="form-control" value="{{ ucfirst($user->roles->first()->name ?? 'User') }}" disabled>
+            <input type="hidden" name="role" value="{{ $user->roles->first()->name ?? 'user' }}">
         </div>
-
 
         <div class="form-group mb-2">
             <label class="form-label">Security Question:</label>
@@ -66,13 +65,14 @@
             <input type="password" class="form-control" name="password_confirmation">
         </div>
 
+        {{-- Role Selection Only for Users with edit_users Permission --}}
         @can('edit_users')
         <div class="col-12 mb-2">
             <label for="roles" class="form-label">Roles:</label>
             <select multiple class="form-select" name="roles[]">
                 @foreach($roles as $role)
-                    <option value="{{ $role->name }}" {{ $role->taken ? 'selected' : '' }}>
-                        {{ $role->name }}
+                    <option value="{{ $role->name }}" {{ $user->hasRole($role->name) ? 'selected' : '' }}>
+                        {{ ucfirst($role->name) }}
                     </option>
                 @endforeach
             </select>
@@ -83,7 +83,7 @@
             @foreach($permissions as $permission)
                 <div class="form-check">
                     <input type="checkbox" name="permissions[]" value="{{ $permission->name }}" class="form-check-input"
-                        {{ $permission->assigned ? 'checked' : '' }}>
+                        {{ $user->hasPermissionTo($permission->name) ? 'checked' : '' }}>
                     <label class="form-check-label">{{ $permission->name }}</label>
                 </div>
             @endforeach
