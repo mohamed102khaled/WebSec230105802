@@ -7,6 +7,9 @@ use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
+use Artisan;
 
 class UsersController extends Controller
 {
@@ -74,7 +77,23 @@ class UsersController extends Controller
 
     public function profile()
     {
-        return view('users.profile', ['user' => Auth::user()]);
+        $user = $user??auth()->user();
+        if(auth()->id()!=$user?->id) {
+            if(!auth()->user()->hasPermissionTo('show_users')) abort(401);}
+        
+        $permissions = [];
+        foreach
+        ($user->permissions as $permission) {
+                $permissions[] = $permission;
+            }
+        foreach
+        ($user->roles as $role) {
+        foreach
+        ($role->permissions as $permission) {
+                    $permissions[] = $permission;
+                }
+            }
+            return view('users.profile', compact('user', 'permissions'));
     }
 
     public function updatePassword(Request $request)
@@ -132,41 +151,67 @@ class UsersController extends Controller
     }
 
     public function edit(User $user)
-    {
-        return view('users.edit', compact('user'));
+{
+    $roles = Role::all(); 
+    $permissions = Permission::all();
+
+    // Attach current roles & permissions for checkboxes
+    foreach ($roles as $role) {
+        $role->assigned = $user->hasRole($role->name);
     }
 
-    public function save(Request $request, User $user = null)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . ($user ? $user->id : 'NULL'),
-            'role' => 'required|string|in:admin,user',
-            'security_question' => 'nullable|string',
-            'security_answer' => 'nullable|string',
-            'password' => $user ? 'nullable|min:8' : 'required|min:8|confirmed',
-        ]);
+    foreach ($permissions as $permission) {
+        $permission->assigned = $user->hasPermissionTo($permission->name);
+    }
 
-        $user = $user ?? new User();
-        $user->name = $request->name;
-        $user->email = $request->email;
+    return view('users.edit', compact('user', 'roles', 'permissions'));
+}
+
+
+public function save(Request $request, User $user = null)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email,' . ($user ? $user->id : 'NULL'),
+        'role' => 'required|in:user,admin',
+        'security_question' => 'nullable|string',
+        'security_answer' => 'nullable|string',
+        'password' => $user ? 'nullable|min:8' : 'required|min:8|confirmed',
+    ]);
+
+    $user = $user ?? new User();
+    $user->name = $request->name;
+    $user->email = $request->email;
+
+    if (auth()->user()->hasPermissionTo('edit_users')) {
         $user->role = $request->role;
-        $user->security_question = $request->security_question ?? null;
-
-        if ($request->filled('security_answer')) {
-            $user->security_answer = Hash::make($request->security_answer);
-        }
-
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
-        } elseif (!$user->exists) {
-            return back()->with('error', 'Password is required when adding a new user.');
-        }
-
-        $user->save();
-
-        return redirect()->route('users_list')->with('success', 'User saved successfully.');
     }
+
+    $user->security_question = $request->security_question ?? null;
+
+    if ($request->filled('security_answer')) {
+        $user->security_answer = Hash::make($request->security_answer);
+    }
+
+    if ($request->filled('password')) {
+        $user->password = Hash::make($request->password);
+    } elseif (!$user->exists) {
+        return back()->with('error', 'Password is required when adding a new user.');
+    }
+
+    $user->save();
+
+    if (auth()->user()->hasPermissionTo('edit_users')) {
+        $user->syncRoles([$request->role]);
+        $user->syncPermissions($request->permissions ?? []);
+    }
+
+    return redirect()->route('users_edit', $user->id)->with('success', 'User updated successfully.');
+}
+
+
+
+
 
     public function delete(User $user)
     {
@@ -174,3 +219,4 @@ class UsersController extends Controller
         return redirect()->route('users_list')->with('success', 'User deleted successfully.');
     }
 }
+    

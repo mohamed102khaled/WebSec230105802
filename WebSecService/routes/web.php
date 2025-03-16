@@ -46,6 +46,7 @@ Route::get('/login', [UsersController::class, 'login'])->name('login');
 Route::post('/login', [UsersController::class, 'doLogin'])->name('do_login');
 Route::post('/logout', [UsersController::class, 'doLogout'])->name('do_logout');
 Route::get('/profile', [UsersController::class, 'profile'])->name('profile')->middleware('auth');
+Route::post('users/save/{user}', [UsersController::class, 'save'])->name('users_save');
 Route::post('/profile/update-password', [UsersController::class, 'updatePassword'])->name('update_password')->middleware('auth');
 
 Route::get('/forgot-password', [UsersController::class, 'forgotPassword'])->name('forgot_password');
@@ -56,6 +57,7 @@ Route::post('/reset-password', [UsersController::class, 'resetPassword'])->name(
 
 Route::get('products', [ProductsController::class, 'list'])->name('products_list');
 Route::get('products/edit/{product?}', [ProductsController::class, 'edit'])->name('products_add');
+Route::get('products/edit/{product}', [ProductsController::class, 'edit'])->name('products_edit');
 Route::post('products/save/{product?}', [ProductsController::class, 'save'])->name('products_save');
 Route::get('products/delete/{product}', [ProductsController::class, 'delete'])->name('products_delete');
 
@@ -65,6 +67,7 @@ Route::post('/register', [UsersController::class, 'doRegister'])->name('do_regis
 Route::get('/users/edit/{user}', [UsersController::class, 'edit'])->name('users_edit');
 Route::post('/users/save/{user?}', [UsersController::class, 'save'])->name('users_save');
 Route::get('/users/delete/{user}', [UserController::class, 'delete'])->name('users_delete');
+Route::get('users/edit/{user?}', [UsersController::class, 'edit'])->name('users_edit');
 
 Route::get('/grades', [GradeController::class, 'list'])->name('grades_list');
 Route::get('/grades/add', [GradeController::class, 'edit'])->name('grades_add');

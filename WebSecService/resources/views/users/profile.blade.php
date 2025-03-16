@@ -9,34 +9,44 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <div class="card">
-        <div class="card-body">
-            <p><strong>Name:</strong> {{ Auth::user()->name }}</p>
-            <p><strong>Email:</strong> {{ Auth::user()->email }}</p>
+    <div class="d-flex justify-content-center">
+        <div class="m-6 col-sm-12">
+            <table class="table table-striped">
+                <tr>
+                    <th>Name</th><td>{{$user->name}}</td>
+                </tr>
+                <tr>
+                    <th>Email</th><td>{{$user->email}}</td>
+                </tr>
+                <tr>
+                    <th>Roles</th>
+                    <td>
+                        @foreach($user->roles as $role)
+                            <span class="badge bg-primary">{{$role->name}}</span>
+                        @endforeach
+                    </td>
+                </tr>
+                <tr>
+                    <th>Permissions</th>
+                    <td>
+                        @foreach($permissions as $permission)
+                        <span class="badge bg-success">{{$permission->display_name}}</span>
+                        @endforeach
+                    </td>
+                </tr>
+            </table>
+            <div class="row">
+                <div class="col col-10">
+                </div>
+                <div class="col col-2">
+                    @if(auth()->user()->hasPermissionTo('edit_users')||auth()->id()==$user->id)
+                    <a href="{{ route('users_edit', $user->id) }}" class="btn btn-success">Edit</a> 
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
-
-    <h3 class="mt-4">Change Password</h3>
-    <form action="{{ route('update_password') }}" method="POST">
-        @csrf
-        <div class="form-group mb-2">
-            <label class="form-label">Old Password:</label>
-            <input type="password" class="form-control" name="old_password" required>
-            @error('old_password') <small class="text-danger">{{ $message }}</small> @enderror
-        </div>
-        <div class="form-group mb-2">
-            <label class="form-label">New Password:</label>
-            <input type="password" class="form-control" name="new_password" required>
-            @error('new_password') <small class="text-danger">{{ $message }}</small> @enderror
-        </div>
-        <div class="form-group mb-2">
-            <label class="form-label">Confirm New Password:</label>
-            <input type="password" class="form-control" name="new_password_confirmation" required>
-        </div>
-        <div class="form-group mb-2">
-            <button type="submit" class="btn btn-primary">Update Password</button>
-        </div>
-    </form>
 </div>
+
 
 @endsection

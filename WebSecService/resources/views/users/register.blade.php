@@ -38,10 +38,8 @@
 
         <div class="form-group mb-2">
             <label class="form-label">Role:</label>
-            <select name="role" class="form-control" required>
-                <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>User</option>
-                <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
-            </select>
+            <input type="text" class="form-control" value="{{ ucfirst($user->role ?? 'User') }}" disabled>
+            <input type="hidden" name="role" value="{{ $user->role ?? 'user' }}">
         </div>
 
         <div class="form-group mb-2">

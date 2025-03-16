@@ -43,9 +43,12 @@
         return redirect()->route('products_list')->with('success', 'Product saved successfully.');
     }
  
-     public function delete(Product $product) {
-         $product->delete();
-         return redirect()->route('products_list');
+    public function delete(Request $request, Product $product) {
+        if (!auth()->user()->hasPermissionTo('delete_products')) {
+            abort(401);
+        }
+        $product->delete();
+        return redirect()->route('products_list');
      }
  
      public function list(Request $request) 
