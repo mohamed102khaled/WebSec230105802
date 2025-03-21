@@ -20,28 +20,31 @@ class UsersController extends Controller
     }
 
     public function doRegister(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'role' => 'required|in:admin,user', // ✅ Ensure role is required
-            'security_question' => 'nullable|string',
-            'security_answer' => 'nullable|string',
-            'password' => 'required|confirmed|min:8',
-        ]);
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email',
+        'role' => 'required|exists:roles,name', // Ensure role exists in DB
+        'security_question' => 'nullable|string',
+        'security_answer' => 'nullable|string',
+        'password' => 'required|confirmed|min:8',
+    ]);
 
-        $user = new User();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->role = $request->role; // ✅ Save role
-        $user->security_question = $request->security_question ?? null;
-        $user->security_answer = $request->security_answer ? Hash::make($request->security_answer) : null;
-        $user->password = Hash::make($request->password);
+    $user = new User();
+    $user->name = $request->name;
+    $user->email = $request->email;
+    $user->security_question = $request->security_question ?? null;
+    $user->security_answer = $request->security_answer ? Hash::make($request->security_answer) : null;
+    $user->password = Hash::make($request->password);
 
-        $user->save();
+    $user->save();
 
-        return redirect('/login')->with('success', 'Registration successful! You can now log in.');
-    }
+    // Assign Role to User (Ensure it is added to model_has_roles)
+    $user->assignRole($request->role);
+
+    return redirect('/login')->with('success', 'Registration successful! You can now log in.');
+}
+
 
 
     public function login()
