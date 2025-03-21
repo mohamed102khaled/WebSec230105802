@@ -24,7 +24,7 @@
                     <option value="" {{ request()->role == "" ? "selected" : "" }} disabled>Filter by Role</option>
                     <option value="admin" {{ request()->role == "admin" ? "selected" : "" }}>Admin</option>
                     <option value="user" {{ request()->role == "user" ? "selected" : "" }}>User</option>
-                    <option value="user" {{ request()->role == "Employee" ? "selected" : "" }}>Employee</option>
+                    <option value="Employee" {{ request()->role == "Employee" ? "selected" : "" }}>Employee</option>
                 </select>
             </div>
             <div class="col col-sm-2">
@@ -37,6 +37,7 @@
     </form>
 </div>
 
+
 @foreach($users as $user)
     <div class="card mt-4">
         <div class="card-body">
@@ -44,7 +45,9 @@
             <table class="table table-striped">
                 <tr><th width="20%">Name</th><td>{{ $user->name }}</td></tr>
                 <tr><th>Email</th><td>{{ $user->email }}</td></tr>
-                <tr><th>Role</th><td>{{ ucfirst($user->role) }}</td></tr>
+                <tr><th>Role</th><td>@foreach($user->roles as $role)
+            <span class="badge bg-primary">{{$role->name}}</span>
+          @endforeach</td></tr>
             </table>
             <div class="text-end">
                 <a href="{{ route('users_edit', $user->id) }}" class="btn btn-success">Edit</a>

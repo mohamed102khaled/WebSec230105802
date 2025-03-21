@@ -54,6 +54,9 @@ Route::post('/logout', [UsersController::class, 'doLogout'])->name('do_logout');
 Route::get('/profile', [UsersController::class, 'profile'])->name('profile')->middleware('auth');
 Route::post('users/save/{user}', [UsersController::class, 'save'])->name('users_save');
 Route::post('/profile/update-password', [UsersController::class, 'updatePassword'])->name('update_password')->middleware('auth');
+Route::get('/users', [UsersController::class, 'index'])->name('users_list');
+Route::get('/users', [UsersController::class, 'index'])->name('users_list');
+
 
 Route::get('/forgot-password', [UsersController::class, 'forgotPassword'])->name('forgot_password');
 Route::post('/forgot-password', [UsersController::class, 'verifySecurityQuestion'])->name('verify_security_question');
@@ -123,4 +126,19 @@ Route::get('/transcript', function () {
     ];
 
     return view('transcript', compact('student_name', 'student_id', 'semester', 'courses'));
+});
+
+
+
+
+
+
+use App\Http\Controllers\TaskController;
+// use Illuminate\Support\Facades\Route;
+
+Route::middleware('auth')->group(function () {
+    Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
+    Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
+    Route::patch('/tasks/{id}', [TaskController::class, 'update'])->name('tasks.update');
+    Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 });

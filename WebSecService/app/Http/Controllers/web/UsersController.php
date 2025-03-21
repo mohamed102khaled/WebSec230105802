@@ -15,7 +15,8 @@ class UsersController extends Controller
 {
     public function register()
     {
-        return view('users.register');
+        $roles = Role::all(); // Fetch all available roles from database
+        return view('users.register', compact('roles'));
     }
 
     public function doRegister(Request $request)
@@ -173,6 +174,7 @@ public function save(Request $request, User $user = null)
     $request->validate([
         'name' => 'required|string|max:255',
         'email' => 'required|email|unique:users,email,' . ($user ? $user->id : 'NULL'),
+        'role' => 'required|string|exists:roles,name', // ✅ Ensure role exists
         'security_question' => 'nullable|string',
         'security_answer' => 'nullable|string',
         'password' => $user ? 'nullable|min:8' : 'required|min:8|confirmed',
@@ -182,9 +184,8 @@ public function save(Request $request, User $user = null)
     $user->name = $request->name;
     $user->email = $request->email;
 
-    // Role update logic: Only allow admins to change roles
-    if (auth()->user()->can('edit_users') && $request->filled('roles')) {
-        $user->syncRoles($request->roles);
+    if (auth()->user()->can('edit_users')) {
+        $user->role = $request->role; // ✅ Update `users` table
     }
 
     $user->security_question = $request->security_question ?? null;
@@ -201,18 +202,27 @@ public function save(Request $request, User $user = null)
 
     $user->save();
 
-    if (auth()->user()->hasPermissionTo('edit_users')) {
-        $user->syncPermissions($request->permissions ?? []);
+    // ✅ **Ensure Role is Updated in `model_has_roles` Table**
+    if (auth()->user()->can('edit_users')) {
+        $user->syncRoles([$request->role]); // ✅ Sync roles properly
+
+        // ✅ **Force Remove All Permissions & Reassign**
+        $user->permissions()->detach(); // 🔥 Force remove all existing permissions
+        $permissions = $request->permissions ?? []; // Default to empty array
+        $user->syncPermissions($permissions); // ✅ Reassign new permissions
+
+        // ✅ **Clear Cached Permissions**
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
     }
 
     return redirect()->route('users_edit', $user->id)->with('success', 'User updated successfully.');
 }
-
 
     public function delete(User $user)
     {
         $user->delete();
         return redirect()->route('users_list')->with('success', 'User deleted successfully.');
     }
+
+
 }
-    

@@ -67,16 +67,22 @@
 
         {{-- Role Selection Only for Users with edit_users Permission --}}
         @can('edit_users')
-        <div class="col-12 mb-2">
-            <label for="roles" class="form-label">Roles:</label>
-            <select multiple class="form-select" name="roles[]">
-                @foreach($roles as $role)
-                    <option value="{{ $role->name }}" {{ $user->hasRole($role->name) ? 'selected' : '' }}>
-                        {{ ucfirst($role->name) }}
-                    </option>
-                @endforeach
-            </select>
+        <div class="form-group mb-2">
+            <label class="form-label">Edit Role:</label>
+            @can('edit_users')
+                <select name="role" class="form-select">
+                    @foreach($roles as $role)
+                        <option value="{{ $role->name }}" {{ $user->hasRole($role->name) ? 'selected' : '' }}>
+                            {{ ucfirst($role->name) }}
+                        </option>
+                    @endforeach
+                </select>
+            @else
+                <input type="text" class="form-control" value="{{ ucfirst($user->role ?? 'User') }}" disabled>
+                <input type="hidden" name="role" value="{{ $user->role ?? 'user' }}">
+            @endcan
         </div>
+
 
         <div class="form-group mb-2">
             <label class="form-label">Permissions:</label>

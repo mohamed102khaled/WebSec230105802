@@ -12,6 +12,13 @@ class User extends Authenticatable
     use HasRoles;
     use Notifiable;
 
+    use HasRoles; // Enables role retrieval
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id'); // Adjust column name if needed
+    }
+
     protected $fillable = ['name', 'email', 'role', 'password'];
 
     public function setPasswordAttribute($value)

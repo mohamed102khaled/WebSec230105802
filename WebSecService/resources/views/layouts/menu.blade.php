@@ -32,22 +32,22 @@
     <a class="nav-link" href="./books">Books</a>
 </li>
 
+@can('edit_users')
+    <li class="nav-item">
+        <a class="nav-link" href="./users">Users</a>
+    </li>
+@endcan
 
-@auth
-    @if(Auth::user()->isAdmin())
-        <li class="nav-item">
-            <a class="nav-link" href="./users">Users</a>
-        </li>
-    @endif
-@endauth 
 <li class="nav-item">
 <a class="nav-link" href="./grades"> grades</a>
 </li> 
+
 <li class="nav-item">
 <a class="nav-link" href="./exam"> exam</a>
 </li>
 
-
+<li class="nav-item">
+    <a class="nav-link" href="{{ route('tasks.index') }}">To-Do List</a>
 </ul>
 
 <ul class="navbar-nav">
@@ -71,12 +71,9 @@
     <li class="nav-item"><a class="nav-link" href="{{route('register')}}">Register</a></li>
     @endauth
     
+</li>
+    
  </ul>
-
- 
- 
-
-
 
 </div>
 </nav>
