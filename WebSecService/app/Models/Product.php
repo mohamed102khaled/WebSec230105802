@@ -11,4 +11,11 @@
         'description',
         'photo'
     ];
+
+    public function buyers()
+{
+    return $this->belongsToMany(User::class, 'bought_products')
+                ->withPivot('quantity', 'total_price', 'status')
+                ->withTimestamps();
+}
  }

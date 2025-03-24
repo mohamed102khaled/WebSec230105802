@@ -48,5 +48,31 @@
     </div>
 </div>
 
+<h2>Bought Products</h2>
+@if($user->boughtProducts->count() > 0)
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($user->boughtProducts as $product)
+                <tr>
+                    <td>{{ $product->name }}</td>
+                    <td>{{ $product->pivot->quantity }}</td>
+                    <td>${{ number_format($product->pivot->total_price, 2) }}</td>
+                    <td>{{ ucfirst($product->pivot->status) }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+@else
+    <p>You have not bought any products yet.</p>
+@endif
+
 
 @endsection

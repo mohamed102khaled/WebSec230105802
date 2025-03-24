@@ -52,20 +52,32 @@
     <div class="card mt-4">
         <div class="card-body">
             <div class="row">
+                <!-- Product Image -->
                 <div class="col col-sm-12 col-lg-4">
                     <img src="{{ asset("images/$product->photo") }}" class="img-thumbnail" alt="{{ $product->name }}" width="100%">
                 </div>
+
+                <!-- Product Details -->
                 <div class="col col-sm-12 col-lg-8 mt-3">
                     <h3>{{ $product->name }}</h3>
-                    <div class="col col-2">
+
+                    <div class="d-flex gap-2 mb-3">
                         @can('edit_products')
-                        <a href="{{route('products_edit', $product->id)}}" class="btn btn-success form-control">Edit</a>
+                            <a href="{{ route('products_edit', $product->id) }}" class="btn btn-success">Edit</a>
                         @endcan
-                    </div>
-                    <div class="col col-2">
+
                         @can('delete_products')
-                        <a href="{{route('products_delete', $product->id)}}" class="btn btn-danger form-control">Delete</a>
+                            <a href="{{ route('products_delete', $product->id) }}" class="btn btn-danger">Delete</a>
                         @endcan
+                        
+                        @auth
+                            @if(auth()->user()->hasRole('Customer'))
+                                <form action="{{ route('buy_product', $product->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-primary">Buy</button>
+                                </form>
+                            @endif
+                        @endauth
                     </div>
 
                     <table class="table table-striped">
@@ -80,5 +92,7 @@
         </div>
     </div>
 @endforeach
+
+
 
 @endsection

@@ -69,6 +69,7 @@ Route::get('products/edit/{product?}', [ProductsController::class, 'edit'])->nam
 Route::get('products/edit/{product}', [ProductsController::class, 'edit'])->name('products_edit');
 Route::post('products/save/{product?}', [ProductsController::class, 'save'])->name('products_save');
 Route::get('products/delete/{product}', [ProductsController::class, 'delete'])->name('products_delete');
+Route::post('/buy/{product}', [ProductsController::class, 'buy'])->name('buy_product')->middleware('auth');
 
 Route::get('/users', [UserController::class, 'list'])->name('users_list');
 Route::get('/users/add', [UserController::class, 'edit'])->name('users_add');

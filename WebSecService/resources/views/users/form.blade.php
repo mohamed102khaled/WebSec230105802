@@ -19,10 +19,13 @@
     <div class="form-group mb-2">
         <label class="form-label">Role:</label>
         <select name="role" class="form-control" required>
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-            <option value="Employee">Employee</option>
-        </select>
+    @foreach($roles as $role)
+        <option value="{{ $role }}" {{ old('role') == $role ? 'selected' : '' }}>
+            {{ ucfirst($role) }}
+        </option>
+    @endforeach
+</select>
+
     </div>
 
     <!-- Security Question Dropdown -->
