@@ -14,10 +14,11 @@ use Artisan;
 class UsersController extends Controller
 {
     public function register()
-    {
-        $roles = Role::all(); // Fetch all available roles from database
-        return view('users.register', compact('roles'));
-    }
+{
+    $roles = Role::all(); // Fetch roles from database
+    return view('users.register', compact('roles'));
+}
+
 
     public function doRegister(Request $request)
 {
@@ -218,7 +219,7 @@ public function save(Request $request, User $user = null)
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
     }
 
-    return redirect()->route('users_edit', $user->id)->with('success', 'User updated successfully.');
+    return redirect()->route('users_edit', $user->id)->with('success', 'User saved successfully.');
 }
 
     public function delete(User $user)
