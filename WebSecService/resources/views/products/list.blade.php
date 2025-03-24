@@ -75,6 +75,7 @@
                         <tr><th>Price</th><td>${{ number_format($product->price, 2) }}</td></tr>
                         <tr><th>Description</th><td>{{ $product->description }}</td></tr>
                     </table>
+                    
                 </div>
             </div>
         </div>
