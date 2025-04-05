@@ -32,7 +32,7 @@
     <a class="nav-link" href="./books">Books</a>
 </li>
 
-@can('edit_users')
+@can('show_users')
     <li class="nav-item">
         <a class="nav-link" href="./users">Users</a>
     </li>

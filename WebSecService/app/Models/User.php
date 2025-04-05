@@ -29,4 +29,12 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
+
+    public function boughtProducts()
+{
+    return $this->belongsToMany(Product::class, 'bought_products')
+                ->withPivot('quantity', 'total_price', 'status')
+                ->withTimestamps();
+}
+
 }

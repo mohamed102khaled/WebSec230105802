@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    public function register()
+{
+    $roles = Role::all(); // Fetch roles from the database
+    return view('users.register', compact('roles')); // Pass roles correctly to the view
+}
+
     // Show all users
     public function list(Request $request)
     {

@@ -19,14 +19,23 @@
             <div class="col col-sm-3">
                 <input name="keywords" type="text" class="form-control" placeholder="Search by Name or Email" value="{{ request()->keywords }}" />
             </div>
-            <div class="col col-sm-2">
+            <<div class="col col-sm-2">
                 <select name="role" class="form-select">
-                    <option value="" {{ request()->role == "" ? "selected" : "" }} disabled>Filter by Role</option>
-                    <option value="admin" {{ request()->role == "admin" ? "selected" : "" }}>Admin</option>
-                    <option value="user" {{ request()->role == "user" ? "selected" : "" }}>User</option>
-                    <option value="Employee" {{ request()->role == "Employee" ? "selected" : "" }}>Employee</option>
+                    @if(auth()->user()->hasRole('Employee'))
+                        <!-- Employee can only see Customers -->
+                        <option value="customer" selected>Customer</option>
+                    @else
+                        <option value="" {{ request()->role == "" ? "selected" : "" }} disabled>Filter by Role</option>
+                        <option value="admin" {{ request()->role == "admin" ? "selected" : "" }}>Admin</option>
+                        <option value="user" {{ request()->role == "user" ? "selected" : "" }}>User</option>
+                        <option value="Employee" {{ request()->role == "Employee" ? "selected" : "" }}>Employee</option>
+                        <option value="customer" {{ request()->role == "customer" ? "selected" : "" }}>Customer</option>
+                    @endif
                 </select>
             </div>
+
+
+
             <div class="col col-sm-2">
                 <button type="submit" class="btn btn-primary">Filter</button>
             </div>
@@ -49,10 +58,12 @@
             <span class="badge bg-primary">{{$role->name}}</span>
           @endforeach</td></tr>
             </table>
+            @can('edit_users')
             <div class="text-end">
                 <a href="{{ route('users_edit', $user->id) }}" class="btn btn-success">Edit</a>
                 <a href="{{ route('users_delete', $user->id) }}" class="btn btn-danger">Delete</a>
             </div>
+            @endcan
         </div>
     </div>
 @endforeach
