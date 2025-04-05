@@ -228,5 +228,23 @@ public function save(Request $request, User $user = null)
         return redirect()->route('users_list')->with('success', 'User deleted successfully.');
     }
 
+    public function addCredit(Request $request, User $user)
+{
+    if (!auth()->user()->can('add_credits')) {
+        abort(403, 'Unauthorized action.');
+    }
+
+    $request->validate([
+        'credit' => 'required|numeric|min:0.01', // Only positive values allowed
+    ]);
+
+    // Add the credit to the user's account
+    $user->credit += $request->credit;
+    $user->save();
+
+    return redirect()->route('users_list')->with('success', 'Credit added successfully.');
+}
+
+
 
 }

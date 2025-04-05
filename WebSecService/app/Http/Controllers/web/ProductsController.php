@@ -37,6 +37,7 @@ class ProductsController extends Controller
         $product->model = $request->model;
         $product->price = $request->price;
         $product->photo = $request->photo;
+        $product->quantity = $request->quantity;
         $product->description = $request->description;
 
         $product->save();
@@ -80,31 +81,32 @@ class ProductsController extends Controller
 
     public function buy(Product $product, Request $request)
     {
-        $user = Auth::user(); // Get the logged-in user
-    
+        $user = Auth::user();
+
         // Ensure only customers can buy
-        if (!$user->hasRole('customer')) {
+        if (!$user->hasRole('Customer')) {
             return redirect()->back()->with('error', 'Only customers can purchase products.');
         }
-    
-        // Check if the user has enough credit
+
+        // Check if user has enough credit
         if ($user->credit < $product->price) {
             return view('products.insufficient_credit', compact('user', 'product'));
         }
-    
-        // Deduct product price from user credit
+
+        // Deduct product price from user's credit
         $user->credit -= $product->price;
         $user->save();
-    
-        // Save purchase order in "bought products" (Ensure you have a `bought_products` table)
+
+        // Add product to bought list
         $user->boughtProducts()->attach($product->id, [
             'quantity' => 1,
             'total_price' => $product->price,
-            'status' => 'purchased',
+            'status' => 'bought',
             'created_at' => now(),
-            'updated_at' => now(),
+            'updated_at' => now()
         ]);
-    
+
         return redirect()->back()->with('success', 'Product purchased successfully!');
     }
+
 }

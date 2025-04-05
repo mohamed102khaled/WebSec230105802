@@ -56,6 +56,10 @@ Route::post('users/save/{user}', [UsersController::class, 'save'])->name('users_
 Route::post('/profile/update-password', [UsersController::class, 'updatePassword'])->name('update_password')->middleware('auth');
 Route::get('/users', [UsersController::class, 'index'])->name('users_list');
 Route::get('/users', [UsersController::class, 'index'])->name('users_list');
+Route::post('/users/{user}/add-credit', [UsersController::class, 'addCredit'])
+    ->name('users_add_credit')
+    ->middleware('can:add_credits');
+
 
 
 Route::get('/forgot-password', [UsersController::class, 'forgotPassword'])->name('forgot_password');
@@ -70,6 +74,10 @@ Route::get('products/edit/{product}', [ProductsController::class, 'edit'])->name
 Route::post('products/save/{product?}', [ProductsController::class, 'save'])->name('products_save');
 Route::get('products/delete/{product}', [ProductsController::class, 'delete'])->name('products_delete');
 Route::post('/buy/{product}', [ProductsController::class, 'buy'])->name('buy_product')->middleware('auth');
+Route::post('/products/{product}/buy', [ProductsController::class, 'buy'])
+    ->name('buy_product')
+    ->middleware('auth');
+
 
 Route::get('/users', [UserController::class, 'list'])->name('users_list');
 Route::get('/users/add', [UserController::class, 'edit'])->name('users_add');

@@ -19,6 +19,9 @@
                     <th>Email</th><td>{{$user->email}}</td>
                 </tr>
                 <tr>
+                    <th>Credits</th><td>${{ number_format($user->credit, 2) }}</td>
+                </tr>
+                <tr>
                     <th>Roles</th>
                     <td>
                         @foreach($user->roles as $role)
@@ -73,6 +76,5 @@
 @else
     <p>You have not bought any products yet.</p>
 @endif
-
 
 @endsection
