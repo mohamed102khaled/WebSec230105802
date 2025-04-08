@@ -19,7 +19,7 @@
         </div>
         <div class="col col-3">
         @can('add_users')
-        <a href="{{route('users_add') }}" class="btn btn-success form-control">Add User</a>
+        <a href="{{ route('do_register') }}" class="btn btn-success form-control">Add User</a>
         @endcan
       </div>
     </div>

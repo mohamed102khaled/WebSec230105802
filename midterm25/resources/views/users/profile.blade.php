@@ -26,12 +26,16 @@
                 </td>
             </tr>
             <tr>
+            @auth
+            @if(!auth()->user()->hasRole('Customer'))
                 <th>Permissions</th>
                 <td>
                     @foreach($permissions as $permission)
                         <span class="badge bg-success">{{$permission->display_name}}</span>
                     @endforeach
                 </td>
+            @endif
+            @endauth
             </tr>
         </table>
 

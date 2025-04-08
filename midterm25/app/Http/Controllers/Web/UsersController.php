@@ -5,6 +5,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash; // Add this line
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use DB;
@@ -15,6 +16,7 @@ use App\Models\User;
 class UsersController extends Controller {
 
 	use ValidatesRequests;
+
 
     public function list(Request $request)
     {
@@ -34,30 +36,31 @@ class UsersController extends Controller {
         return view('users.register');
     }
 
-    public function doRegister(Request $request) {
-
-    	try {
-    		$this->validate($request, [
+    public function doRegister(Request $request)
+    {
+        $request->validate([
             'name' => ['required', 'string', 'min:5'],
             'email' => ['required', 'email', 'unique:users'],
-            'password' => ['required', 'confirmed', Password::min(8)],
-        	]);
-    	}
-    	catch(\Exception $e) {
-    		return redirect()->back()->withInput($request->input())->withErrors('Invalid registration information.');
-    	}
+            'password' => ['required', 'string', 'min:8'],
+        ]);
 
-    	$user = new User();
-	    $user->name = $request->name;
-	    $user->email = $request->email;
-	    $user->password = bcrypt($request->password);
-	    $user->save();
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+        if(auth()->user()) {
+            $user->assignRole('Employee');
+            return redirect()->route('users')->with('success', 'User created successfully!');
+        }
+        else {
+            $user->assignRole('Customer');
+            Auth::login($user);
+            return redirect('/')->with('success', 'Registration successful!');
+        }
+        
 
-        // Assign default role "Customer"
-        $customerRole = Role::firstOrCreate(['name' => 'Customer']);
-        $user->assignRole($customerRole);
-
-        return redirect('/');
+        
     }
 
     public function login(Request $request) {
