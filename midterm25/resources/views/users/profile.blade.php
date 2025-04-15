@@ -9,15 +9,16 @@
             </tr>
             <tr>
                 <th>Email</th><td>{{$user->email}}</td>
-            </tr>
-            @auth
-            @if(auth()->user()->hasRole('Customer'))
-                <tr>
-                    <th>credit</th><td>{{$user->credit}}</td>
                 </tr>
-            @endif
-            @endauth
-            <tr>
+                    @auth
+                        @if(auth()->user()->hasRole(['Customer', 'Super_user']))
+                            <tr>
+                                <th>credit</th><td>{{$user->credit}}</td>
+                            </tr>
+                        @endif
+                    @endauth
+                <tr>
+
                 <th>Roles</th>
                 <td>
                     @foreach($user->roles as $role)
@@ -27,7 +28,7 @@
             </tr>
             <tr>
             @auth
-            @if(!auth()->user()->hasRole('Customer'))
+            @if(!auth()->user()->hasRole(['Customer', 'Super_user']))
                 <th>Permissions</th>
                 <td>
                     @foreach($permissions as $permission)
@@ -60,7 +61,7 @@
 </div>
 
 @auth
-@if(auth()->user()->hasRole('Customer'))
+@if(auth()->user()->hasRole(['Customer', 'Super_user']))
     <h2 class="mt-4 mb-3">Bought Products</h2>
 
     @if($user->boughtProducts && $user->boughtProducts->count() > 0)
@@ -80,7 +81,7 @@
                             <td>{{ $product->name }}</td>
                             <td>{{ $product->pivot->quantity ?? 1 }}</td>
                             <td>${{ number_format($product->pivot->total_price ?? ($product->price), 2) }}</td>
-                            <td>{{ ucfirst($product->pivot->status ?? 'pending') }}</td>
+                            <td>{{ $product->pivot->status_message ?? 'No status message' }}</td>
                         </tr>
                     @endforeach
                 </tbody>

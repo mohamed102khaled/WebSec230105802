@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Web;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use DB;
+use App\Models\User;
+
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
@@ -39,6 +41,9 @@ class ProductsController extends Controller {
 	}
 
 	public function edit(Request $request, Product $product = null) {
+		if (!auth()->user()->hasRole('Employee','Admin')) {
+            abort(403);
+        }
 
 		if(!auth()->user()) return redirect('/');
 
@@ -87,6 +92,7 @@ class ProductsController extends Controller {
 			return view('products.insufficient_credit', [
 				'product' => $product,
 				'user' => $user,
+				
 			]);
 		}
 	
@@ -104,5 +110,69 @@ class ProductsController extends Controller {
 		return redirect()->route('products_list')->with('success', 'Product bought successfully!');
 	}
 	
+	public function returnProduct(Product $product)
+{
+    $user = auth()->user();
+
+    // Find the pivot record
+    $pivot = $user->boughtProducts()
+        ->where('product_id', $product->id)
+        ->first();
+
+    if (!$pivot) {
+        return back()->with('error', 'You have not bought this product.');
+    }
+
+    // Refund only if product was actually bought
+    $totalPrice = $pivot->pivot->total_price;
+
+    // Refund user credits
+    $user->credit += $totalPrice;
+    $user->save();
+
+    // Increase product quantity (if tracked)
+    $product->stock += $pivot->pivot->quantity;
+    $product->save();
+
+    // Remove the bought product record
+    $user->boughtProducts()->detach($product->id);
+
+    return back()->with('success', 'Product returned and credits refunded.');
+}
+
+public function trackDelivery()
+{
+    if (!auth()->user()->hasPermissionTo('track_delivery')) {
+        abort(403);
+    }
+
+    $products = Product::all();
+    $users = User::all();
+
+    return view('products.track_delivery', compact('products', 'users'));
+
+}
+
+
+public function updateStatusMessage(Request $request, $product_id, $user_id)
+{
+    if (!auth()->user()->hasPermissionTo('track_delivery')) {
+        abort(403);
+    }
+
+    $user = User::find($user_id);
+    $product = Product::find($product_id);
+
+    $user->boughtProducts()->updateExistingPivot($product_id, [
+        'status_message' => $request->input('status_message'),
+    ]);
+
+    return redirect()->route('track_delivery')->with('success', 'Status message updated successfully!');
+}
+
+
+
+
+
 	
 } 

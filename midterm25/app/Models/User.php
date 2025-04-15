@@ -50,8 +50,11 @@ class User extends Authenticatable
         ];
     }
 
-    public function boughtProducts() {
-        return $this->belongsToMany(Product::class, 'bought_products')->withTimestamps();
+    public function boughtProducts()
+    {
+        return $this->belongsToMany(Product::class, 'bought_products')
+                    ->withPivot('quantity', 'total_price', 'status_message')
+                    ->withTimestamps();
     }
     
 }

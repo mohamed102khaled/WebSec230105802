@@ -82,7 +82,7 @@
 					    </div>
                         <div class="col col-2">
                             @auth
-                                @if(auth()->user()->hasRole('Customer'))
+                                @if(auth()->user()->hasRole(['Customer', 'Super_user']))
                                     <form action="{{ route('buy_product', $product->id) }}" method="POST">
                                         @csrf
                                         <button type="submit" class="btn btn-primary">Buy</button>
@@ -90,6 +90,7 @@
                                 @endif
                             @endauth
                         </div>
+
 					</div>
 
                     <table class="table table-striped">

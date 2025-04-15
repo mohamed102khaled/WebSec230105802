@@ -12,6 +12,12 @@ use DB;
 use Artisan;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\VerificationEmail;
+use Laravel\Socialite\Facades\Socialite;
+use Carbon\Carbon;
+
 
 class UsersController extends Controller {
 
@@ -36,47 +42,67 @@ class UsersController extends Controller {
         return view('users.register');
     }
 
-    public function doRegister(Request $request)
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'min:5'],
+
+    public function doRegister(Request $request) {
+
+        try {
+            $this->validate($request, [
+            'name' => ['required', 'string', 'min:4'],
             'email' => ['required', 'email', 'unique:users'],
-            'password' => ['required', 'string', 'min:8'],
-        ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-        if(auth()->user()) {
-            $user->assignRole('Employee');
-            return redirect()->route('users')->with('success', 'User created successfully!');
+            'password' => ['required', 'confirmed', Password::min(8)],
+            ]);
         }
-        else {
-            $user->assignRole('Customer');
-            Auth::login($user);
-            return redirect('/')->with('success', 'Registration successful!');
+        catch(\Exception $e) {
+            return redirect()->back()->withInput($request->input())->withErrors('Invalid registration information.');
         }
-        
 
-        
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = bcrypt($request->password);
+        $user->save();
+
+        // Assign default role "Customer"
+        $customerRole = Role::firstOrCreate(['name' => 'Customer']);
+        $user->assignRole($customerRole);
+
+        $title = "Verification Link";
+        $token = Crypt::encryptString(json_encode(['id' => $user->id, 'email' => $user->email]));
+        $link = route("verify", ['token' => $token]);
+        Mail::to($user->email)->send(new VerificationEmail($link, $user->name));
+
+        return redirect('/');
     }
+
+
+
 
     public function login(Request $request) {
         return view('users.login');
     }
 
-    public function doLogin(Request $request) {
-    	
-    	if(!Auth::attempt(['email' => $request->email, 'password' => $request->password]))
-            return redirect()->back()->withInput($request->input())->withErrors('Invalid login information.');
+    public function doLogin(Request $request)
+    {
+        $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string'],
+        ]);
 
         $user = User::where('email', $request->email)->first();
-        Auth::setUser($user);
 
-        return redirect('/');
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return back()->withInput()->withErrors(['email' => 'Invalid login information.']);
+        }
+
+        if (is_null($user->email_verified_at)) {
+            return back()->withInput()->withErrors(['email' => 'Your email is not verified.']);
+        }
+
+        Auth::login($user);
+        return redirect('/')->with('success', 'Login successful.');
     }
+
+
 
     public function doLogout(Request $request) {
     	
@@ -106,6 +132,9 @@ class UsersController extends Controller {
     }
 
     public function edit(Request $request, User $user = null) {
+        if (!auth()->user()->hasRole(['Employee','Admin'])) {
+            abort(403);
+        }
    
         $user = $user??auth()->user();
         if(auth()->id()!=$user?->id) {
@@ -152,6 +181,10 @@ class UsersController extends Controller {
     }
 
     public function delete(Request $request, User $user) {
+        if (!auth()->user()->hasRole('Employee','Admin')) {
+            abort(403);
+        }
+        
         if(!auth()->user()->hasPermissionTo('delete_users')) abort(401);
         $user->delete();
         return redirect()->route('users');
@@ -225,4 +258,38 @@ class UsersController extends Controller {
         return redirect()->route('charge_credit_form', $user->id)
                          ->with('success', 'Credit charged successfully!');
     }
-} 
+
+    public function verify(Request $request) {
+
+        $decryptedData = json_decode(Crypt::decryptString($request->token), true);
+        $user = User::find($decryptedData['id']);
+        if(!$user) abort(401);
+        $user->email_verified_at = Carbon::now();
+        $user->save();
+        return view('users.verified', compact('user'));
+       }
+
+    public function redirectToGoogle()
+     {
+        return Socialite::driver('google')->redirect();
+     }
+
+     public function handleGoogleCallback() {
+        try {
+        $googleUser = Socialite::driver('google')->user();
+        $user = User::updateOrCreate([
+        'google_id' => $googleUser->id,
+        ], [
+        'name' => $googleUser->name,
+        'email' => $googleUser->email,
+        'google_token' => $googleUser->token,
+        'google_refresh_token' => $googleUser->refreshToken,
+        ]);
+        Auth::login($user);
+        return redirect('/');
+        } catch (\Exception $e) {
+        return redirect('/login')->with('error', 'Google login failed.'); // Handle errors
+        }
+       }
+ 
+}
