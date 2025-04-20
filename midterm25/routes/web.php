@@ -60,7 +60,7 @@ Route::get('/auth/google', [UsersController::class, 'redirectToGoogle'])->name('
 Route::get('/auth/google/callback',[UsersController::class, 'handleGoogleCallback']);
 Route::get('verify', [UsersController::class, 'verify'])->name('verify');
 Route::get('/auth/google', [UsersController::class, 'redirectToGoogle'])->name('login_with_google');
- Route::get('/auth/google/callback', [UsersController::class, 'handleGoogleCallback']);
+Route::get('/auth/google/callback', [UsersController::class, 'handleGoogleCallback']);
 
 
 Route::get('products', [ProductsController::class, 'list'])->name('products_list');
