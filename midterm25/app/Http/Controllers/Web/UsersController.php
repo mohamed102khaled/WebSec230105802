@@ -74,9 +74,6 @@ class UsersController extends Controller {
         return redirect('/');
     }
 
-
-
-
     public function login(Request $request) {
         return view('users.login');
     }
@@ -94,6 +91,7 @@ class UsersController extends Controller {
             return back()->withInput()->withErrors(['email' => 'Invalid login information.']);
         }
 
+        // ❗ Block login if not verified
         if (is_null($user->email_verified_at)) {
             return back()->withInput()->withErrors(['email' => 'Your email is not verified.']);
         }
@@ -101,8 +99,6 @@ class UsersController extends Controller {
         Auth::login($user);
         return redirect('/')->with('success', 'Login successful.');
     }
-
-
 
     public function doLogout(Request $request) {
     	
@@ -274,22 +270,29 @@ class UsersController extends Controller {
         return Socialite::driver('google')->redirect();
     }
 
-    public function handleGoogleCallback() {
+    public function handleGoogleCallback()
+    {
         try {
-            $googleUser = Socialite::driver('google')->user();
-            $user = User::updateOrCreate([
-                'google_id' => $googleUser->id,
-            ], [
-                'name' => $googleUser->name,
-                'email' => $googleUser->email,
-                'google_token' => $googleUser->token,
-                'google_refresh_token' => $googleUser->refreshToken,
-            ]);
+            $googleUser = Socialite::driver('google')->stateless()->user();
+
+            $user = User::updateOrCreate(
+                ['google_id' => $googleUser->id],
+                [
+                    'name' => $googleUser->name,
+                    'email' => $googleUser->email,
+                    'google_token' => $googleUser->token,
+                    'google_refresh_token' => $googleUser->refreshToken,
+                    'email_verified_at' => now(),
+                ]
+            );
+
             Auth::login($user);
             return redirect('/');
+
         } catch (\Exception $e) {
-            return redirect('/login')->with('error', 'Google login failed.'); // Handle errors
+            return redirect('/login')->with('error', 'Google login failed: ' . $e->getMessage());
         }
     }
+
  
 }
