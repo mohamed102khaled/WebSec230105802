@@ -21,15 +21,19 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'google_id',
-        'google_token',
-        'google_refresh_token',
-        'email_verified_at',
-    ];
+    // app/Models/User.php
+protected $fillable = [
+    'name',
+    'email',
+    'password',
+    'google_id',
+    'google_token',
+    'google_refresh_token',
+    'remember_token',
+    'email_verified_at',
+    'temp_password',
+];
+
     
 
     /**

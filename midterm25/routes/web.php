@@ -56,6 +56,10 @@ Route::get('users/edit_password/{user?}', [UsersController::class, 'editPassword
 Route::post('users/save_password/{user}', [UsersController::class, 'savePassword'])->name('save_password');
 Route::get('users/charge_credit/{user}', [UsersController::class, 'chargeCreditForm'])->name('charge_credit_form')->middleware('auth');
 Route::post('users/charge_credit/{user}', [UsersController::class, 'chargeCredit'])->name('charge_credit')->middleware('auth');
+Route::get('/forgot-password', [UsersController::class, 'forgotPassword'])->name('forgot_password');
+Route::post('/forgot-password', [UsersController::class, 'sendTemporaryPassword'])->name('send_temp_password');
+
+
 Route::get('/auth/google', [UsersController::class, 'redirectToGoogle'])->name('login_with_google');
 Route::get('/auth/google/callback',[UsersController::class, 'handleGoogleCallback']);
 Route::get('verify', [UsersController::class, 'verify'])->name('verify');
