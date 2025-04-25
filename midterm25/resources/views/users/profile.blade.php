@@ -9,6 +9,9 @@
             </tr>
             <tr>
                 <th>Email</th><td>{{$user->email}}</td>
+                <tr>
+                    <th>Phone</th><td>{{ $user->phone }}</td>
+                </tr>
                 </tr>
                     @auth
                         @if(auth()->user()->hasRole(['Customer', 'Super_user']))

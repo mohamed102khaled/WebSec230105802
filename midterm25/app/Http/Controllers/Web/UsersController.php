@@ -18,6 +18,8 @@ use App\Mail\VerificationEmail;
 use Laravel\Socialite\Facades\Socialite;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Kreait\Firebase\Auth as FirebaseAuth;
+use Kreait\Firebase\Factory;
 
 
 class UsersController extends Controller {
@@ -46,20 +48,21 @@ class UsersController extends Controller {
 
     public function doRegister(Request $request) {
 
-        try {
+        try{
             $this->validate($request, [
-            'name' => ['required', 'string', 'min:4'],
+            'name' => ['required', 'string', 'min:3'],
             'email' => ['required', 'email', 'unique:users'],
+            'phone' => ['required', 'regex:/^01[0-9]{9}$/', 'unique:users'],
             'password' => ['required', 'confirmed', Password::min(8)],
             ]);
-        }
-        catch(\Exception $e) {
+        } catch(\Exception $e) {
             return redirect()->back()->withInput($request->input())->withErrors('Invalid registration information.');
         }
 
         $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->phone = $request->phone;
         $user->password = bcrypt($request->password);
         $user->save();
 
@@ -353,6 +356,33 @@ class UsersController extends Controller {
         });
 
         return redirect()->route('login')->with('success', 'Temporary password sent to your email.');
+    }
+
+    public function handlePhoneLogin(Request $request)
+    {
+        $request->validate(['token' => 'required']);
+
+        $firebase = (new Factory)->withServiceAccount(base_path('firebase.json'));
+        $auth = $firebase->createAuth();
+
+        try {
+            $verifiedIdToken = $auth->verifyIdToken($request->token);
+            $firebaseUser = $auth->getUser($verifiedIdToken->claims()->get('sub'));
+
+            $phone = $firebaseUser->phoneNumber;
+
+            $user = User::firstOrCreate(
+                ['phone' => $phone],
+                ['name' => $phone, 'email' => $phone . '@example.com', 'password' => bcrypt(Str::random(16))]
+            );
+
+            Auth::login($user);
+
+            return response()->json(['success' => true]);
+
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()]);
+        }
     }
 
  

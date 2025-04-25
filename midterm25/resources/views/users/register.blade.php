@@ -21,6 +21,10 @@
         <input type="email" class="form-control" placeholder="email" name="email" required>
       </div>
       <div class="form-group mb-2">
+          <label for="phone" class="form-label">Phone Number:</label>
+          <input type="text" class="form-control" placeholder="01XXXXXXXXX" name="phone" required>
+      </div>
+      <div class="form-group mb-2">
         <label for="model" class="form-label">Password:</label>
         <input type="password" class="form-control" placeholder="password" name="password" required>
       </div>
