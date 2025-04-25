@@ -16,7 +16,7 @@ class User extends Authenticatable
 
     public function role()
     {
-        return $this->belongsTo(Role::class, 'role_id'); // Adjust column name if needed
+        return $this->belongsTo(Role::class, 'role_id');
     }
 
     protected $fillable = ['name', 'email', 'role', 'password'];
