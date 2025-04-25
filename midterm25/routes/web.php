@@ -65,7 +65,6 @@ Route::get('/auth/google/callback',[UsersController::class, 'handleGoogleCallbac
 Route::get('verify', [UsersController::class, 'verify'])->name('verify');
 Route::get('/auth/google', [UsersController::class, 'redirectToGoogle'])->name('login_with_google');
 Route::get('/auth/google/callback', [UsersController::class, 'handleGoogleCallback']);
-Route::post('/auth/phone/callback', [UsersController::class, 'handlePhoneLogin']);
 
 
 

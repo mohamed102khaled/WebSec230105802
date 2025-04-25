@@ -358,32 +358,5 @@ class UsersController extends Controller {
         return redirect()->route('login')->with('success', 'Temporary password sent to your email.');
     }
 
-    public function handlePhoneLogin(Request $request)
-    {
-        $request->validate(['token' => 'required']);
-
-        $firebase = (new Factory)->withServiceAccount(base_path('firebase.json'));
-        $auth = $firebase->createAuth();
-
-        try {
-            $verifiedIdToken = $auth->verifyIdToken($request->token);
-            $firebaseUser = $auth->getUser($verifiedIdToken->claims()->get('sub'));
-
-            $phone = $firebaseUser->phoneNumber;
-
-            $user = User::firstOrCreate(
-                ['phone' => $phone],
-                ['name' => $phone, 'email' => $phone . '@example.com', 'password' => bcrypt(Str::random(16))]
-            );
-
-            Auth::login($user);
-
-            return response()->json(['success' => true]);
-
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'error' => $e->getMessage()]);
-        }
-    }
-
  
 }
