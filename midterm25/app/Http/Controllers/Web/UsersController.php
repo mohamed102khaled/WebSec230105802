@@ -358,5 +358,33 @@ class UsersController extends Controller {
         return redirect()->route('login')->with('success', 'Temporary password sent to your email.');
     }
 
+    public function redirectToFacebook()
+    {
+        return Socialite::driver('facebook')->redirect();
+    }
+
+    public function handleFacebookCallback()
+    {
+        try {
+            $facebookUser = Socialite::driver('facebook')->stateless()->user();
+
+            $user = User::firstOrCreate(
+                ['email' => $facebookUser->getEmail()],
+                [
+                    'name' => $facebookUser->getName(),
+                    'facebook_id' => $facebookUser->getId(),
+                    'email_verified_at' => now(),
+                    'password' => bcrypt(Str::random(16)),
+                ]
+            );
+
+            Auth::login($user);
+            return redirect('/');
+
+        } catch (\Exception $e) {
+            return redirect('/login')->with('error', 'Facebook login failed.');
+        }
+    }
+
  
 }
