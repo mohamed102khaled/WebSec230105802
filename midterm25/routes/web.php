@@ -67,6 +67,8 @@ Route::get('/auth/google', [UsersController::class, 'redirectToGoogle'])->name('
 Route::get('/auth/google/callback', [UsersController::class, 'handleGoogleCallback']);
 Route::get('/auth/facebook', [UsersController::class, 'redirectToFacebook'])->name('login_with_facebook');
 Route::get('/auth/facebook/callback', [UsersController::class, 'handleFacebookCallback'])->name('handleFacebookCallback');
+Route::get('/auth/github/redirect', [UsersController::class, 'redirectToGithub'])->name('login_with_github');
+Route::get('/auth/github/callback', [UsersController::class, 'handleGithubCallback']);
 
 
 Route::get('products', [ProductsController::class, 'list'])->name('products_list');

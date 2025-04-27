@@ -26,6 +26,7 @@
         <button type="submit" class="btn btn-primary">Login</button>
         <a href="{{route('login_with_google')}}" class="btn btn-success">Login with Google</a>
         <a href="{{ route('login_with_facebook') }}" class="btn btn-success">Login with Facebook</a>
+        <a href="{{ route('login_with_github') }}" class="btn btn-success">Login with github</a>
       </div>
     </form>
     </div>
