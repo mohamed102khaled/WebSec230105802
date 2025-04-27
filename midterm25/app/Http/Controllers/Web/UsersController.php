@@ -287,49 +287,34 @@ class UsersController extends Controller {
         return view('users.verified', compact('user'));
        }
 
-    public function redirectToGoogle()
-    {
-        return Socialite::driver('google')->redirect();
-    }
-
-    public function handleGoogleCallback()
-    {
-        try {
-            $googleUser = Socialite::driver('google')->stateless()->user();
-
-            $user = User::where('email', $googleUser->email)->first();
-
-            if (!$user) {
-                $user = new User();
-                $user->email = $googleUser->email;
-            }
-
-            $user->name = $googleUser->name;
-            $user->google_id = $googleUser->id;
-            $user->google_token = $googleUser->token;
-            $user->google_refresh_token = $googleUser->refreshToken;
-            $user->email_verified_at = now();
-
-            if (!$user->password) {
-                // Dummy password in case of Google-only login
-                $user->password = bcrypt(str()->random(16));
-            }
-
-            $user->save();
-
-            // Optional: assign default role if none
-            if (!$user->hasRole('Customer')) {
-                $customerRole = Role::firstOrCreate(['name' => 'Customer']);
-                $user->assignRole($customerRole);
-            }
-
-            Auth::login($user);
-            return redirect('/');
-
-        } catch (\Exception $e) {
-            return redirect('/login')->with('error', 'Google login failed: ' . $e->getMessage());
-        }
-    }
+       public function redirectToGoogle()
+       {
+           return Socialite::driver('google')->redirect();
+       }
+       
+       public function handleGoogleCallback()
+       {
+           try {
+               $googleUser = Socialite::driver('google')->stateless()->user();
+       
+               $user = User::firstOrCreate(
+                   ['email' => $googleUser->getEmail()],
+                   [
+                       'name' => $googleUser->getName(),
+                       'google_id' => $googleUser->getId(),
+                       'email_verified_at' => now(),
+                       'password' => bcrypt(Str::random(16)),
+                   ]
+               );
+       
+               Auth::login($user);
+               return redirect('/');
+       
+           } catch (\Exception $e) {
+               return redirect('/login')->with('error', 'Google login failed: ' . $e->getMessage());
+           }
+       }
+       
 
     public function forgotPassword()
     {
