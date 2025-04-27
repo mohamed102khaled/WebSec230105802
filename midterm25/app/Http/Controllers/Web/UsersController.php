@@ -287,36 +287,7 @@ class UsersController extends Controller {
         return view('users.verified', compact('user'));
        }
 
-       public function redirectToGoogle()
-       {
-           return Socialite::driver('google')->redirect();
-       }
-       
-       public function handleGoogleCallback()
-       {
-           try {
-               $googleUser = Socialite::driver('google')->stateless()->user();
-       
-               $user = User::firstOrCreate(
-                   ['email' => $googleUser->getEmail()],
-                   [
-                       'name' => $googleUser->getName(),
-                       'google_id' => $googleUser->getId(),
-                       'email_verified_at' => now(),
-                       'password' => bcrypt(Str::random(16)),
-                   ]
-               );
-       
-               Auth::login($user);
-               return redirect('/');
-       
-           } catch (\Exception $e) {
-               return redirect('/login')->with('error', 'Google login failed: ' . $e->getMessage());
-           }
-       }
-       
-
-    public function forgotPassword()
+       public function forgotPassword()
     {
         return view('users.forgot_password');
     }
@@ -342,6 +313,35 @@ class UsersController extends Controller {
 
         return redirect()->route('login')->with('success', 'Temporary password sent to your email.');
     }
+
+       public function redirectToGoogle()
+       {
+           return Socialite::driver('google')->redirect();
+       }
+       
+    public function handleGoogleCallback()
+    {
+        try {
+            $googleUser = Socialite::driver('google')->stateless()->user();
+    
+            $user = User::firstOrCreate(
+                ['email' => $googleUser->getEmail()],
+                [
+                    'name' => $googleUser->getName(),
+                    'google_id' => $googleUser->getId(),
+                    'email_verified_at' => now(),
+                    'password' => bcrypt(Str::random(16)),
+                ]
+            );
+    
+            Auth::login($user);
+            return redirect('/');
+    
+        } catch (\Exception $e) {
+            return redirect('/login')->with('error', 'Google login failed: ' . $e->getMessage());
+        }
+    }
+       
 
     public function redirectToFacebook()
     {
