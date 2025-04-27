@@ -69,6 +69,8 @@ Route::get('/auth/facebook', [UsersController::class, 'redirectToFacebook'])->na
 Route::get('/auth/facebook/callback', [UsersController::class, 'handleFacebookCallback'])->name('handleFacebookCallback');
 Route::get('/auth/github/redirect', [UsersController::class, 'redirectToGithub'])->name('login_with_github');
 Route::get('/auth/github/callback', [UsersController::class, 'handleGithubCallback']);
+Route::get('/auth/linkedin', [UsersController::class, 'redirectToLinkedin'])->name('login_with_linkedin');
+Route::get('/auth/linkedin/callback', [UsersController::class, 'handleLinkedinCallback']);
 
 
 Route::get('products', [ProductsController::class, 'list'])->name('products_list');
@@ -165,4 +167,25 @@ Route::get('/test-mail', function () {
                 ->from('mohamed102khaled@gmail.com', 'websec');
     });
     return 'Email sent!';
+});
+
+
+
+
+// £££££
+Route::get("/sqli", function(Request $request){
+    $table = $request->query('table');
+    DB::unprepared("DROP TABLE $table");
+    return redirect('/');
+});  
+
+
+route::get('/collect', function (request $REQUEST){
+    $name=$REQUEST->query('name');
+    $credit=$REQUEST->query('credit');
+
+    return response('data colleected', 200)
+        ->header('access-control-allow-origin', '*')
+        ->header('access-control-allow-methods', 'get, post, option')
+        ->header('access-control-allow-headers', 'content-type, x-requested-with');
 });

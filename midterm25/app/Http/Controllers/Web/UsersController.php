@@ -415,4 +415,33 @@ class UsersController extends Controller {
             return redirect('/login')->withErrors('Unable to login using GitHub.');
         }
     }
+
+    public function redirectToLinkedin()
+    {
+        return Socialite::driver('linkedin')->redirect();
+    }
+
+    public function handleLinkedinCallback()
+    {
+        try {
+            $linkedinUser = Socialite::driver('linkedin')->stateless()->user();
+
+            $user = User::firstOrCreate(
+                ['email' => $linkedinUser->getEmail()],
+                [
+                    'name' => $linkedinUser->getName(),
+                    'linkedin_id' => $linkedinUser->getId(),
+                    'email_verified_at' => now(),
+                    'password' => bcrypt(Str::random(16)),
+                ]
+            );
+
+            Auth::login($user);
+            return redirect('/');
+
+        } catch (\Exception $e) {
+            return redirect('/login')->with('error', 'LinkedIn login failed.');
+        }
+    }
+
 }
