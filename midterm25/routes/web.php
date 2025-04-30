@@ -79,9 +79,9 @@ Route::post('products/save/{product?}', [ProductsController::class, 'save'])->na
 Route::get('products/delete/{product}', [ProductsController::class, 'delete'])->name('products_delete');
 Route::post('/buy/{product}', [ProductsController::class, 'buy'])->name('buy_product')->middleware('auth');
 Route::post('/return/{product}', [ProductsController::class, 'returnProduct'])->name('return_product')->middleware('auth');
-Route::post('track_delivery/{product}/{user}', [ProductsController::class, 'updateStatusMessage'])->name('update_status_message')->middleware('auth');
-Route::get('track_delivery/{product}/{user}', [ProductsController::class, 'trackDelivery'])->name('track_delivery')->middleware('auth');
+Route::post('track_delivery/{purchase}', [ProductsController::class, 'updateStatusMessage'])->name('update_status_message')->middleware('auth');
 Route::get('track_delivery', [ProductsController::class, 'trackDelivery'])->name('track_delivery')->middleware('auth');
+
 
 
 

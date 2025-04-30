@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Test Page')
+@section('title', 'Track Delivery')
 
 @section('content')
     <h1>Track Delivery</h1>
@@ -14,28 +14,25 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($users as $user)
-                @foreach ($user->boughtProducts as $product)
-                    <tr>
-                        <td>{{ $product->name }}</td>
-                        <td>{{ $user->name }}</td>
-                        <td>
-                            @if ($product->pivot->status_message)
-                                {{ $product->pivot->status_message }}
-                            @else
-                                No status message
-                            @endif
-                        </td>
-                        <td>
-                        <form action="{{ route('update_status_message', ['product' => $product->id, 'user' => $user->id]) }}" method="POST">
-
-                                @csrf
-                                <input type="text" name="status_message" value="{{ $product->pivot->status_message }}">
-                                <button type="submit" class="btn btn-primary">Update Status Message</button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
+            @foreach ($purchases as $purchase)
+                <tr>
+                    <td>{{ $purchase->product->name }}</td>
+                    <td>{{ $purchase->user->name }}</td>
+                    <td>
+                        @if ($purchase->status_message)
+                            {{ $purchase->status_message }}
+                        @else
+                            No status message
+                        @endif
+                    </td>
+                    <td>
+                        <form action="{{ route('update_status_message', $purchase->id) }}" method="POST">
+                            @csrf
+                            <input type="text" name="status_message" class="form-control mb-2" value="{{ $purchase->status_message }}">
+                            <button type="submit" class="btn btn-primary">Update Status</button>
+                        </form>
+                    </td>
+                </tr>
             @endforeach
         </tbody>
     </table>

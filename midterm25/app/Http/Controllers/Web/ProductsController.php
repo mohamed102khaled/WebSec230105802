@@ -5,8 +5,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use DB;
 use App\Models\User;
-
-
+use App\Models\BoughtProduct;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 
@@ -146,29 +145,29 @@ public function trackDelivery()
         abort(403);
     }
 
-    $products = Product::all();
-    $users = User::all();
+    $purchases = BoughtProduct::with('user', 'product')->get();
 
-    return view('products.track_delivery', compact('products', 'users'));
-
+    return view('products.track_delivery', compact('purchases'));
 }
 
-
-public function updateStatusMessage(Request $request, $product_id, $user_id)
+public function updateStatusMessage(Request $request, $purchase_id)
 {
     if (!auth()->user()->hasPermissionTo('track_delivery')) {
         abort(403);
     }
 
-    $user = User::find($user_id);
-    $product = Product::find($product_id);
-
-    $user->boughtProducts()->updateExistingPivot($product_id, [
-        'status_message' => $request->input('status_message'),
+    $request->validate([
+        'status_message' => 'nullable|string|max:255'
     ]);
 
-    return redirect()->route('track_delivery')->with('success', 'Status message updated successfully!');
+    $purchase = BoughtProduct::findOrFail($purchase_id);
+    $purchase->status_message = $request->input('status_message');
+    $purchase->save();
+
+    return redirect()->route('track_delivery')->with('success', 'Status updated!');
 }
+
+
 
 
 
