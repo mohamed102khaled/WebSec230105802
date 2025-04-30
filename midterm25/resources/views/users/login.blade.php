@@ -1,36 +1,83 @@
 @extends('layouts.master')
 @section('title', 'Login')
+
 @section('content')
-<div class="d-flex justify-content-center">
-  <div class="card m-4 col-sm-6">
-    <div class="card-body">
-      <form action="{{route('do_login')}}" method="post">
-      {{ csrf_field() }}
-      <div class="form-group">
-        @foreach($errors->all() as $error)
-        <div class="alert alert-danger">
-          <strong>Error!</strong> {{$error}}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <div class="card shadow-lg rounded-4">
+                <div class="card-header bg-primary text-white text-center fs-4">
+                    Login
+                </div>
+
+                <div class="card-body">
+
+                    {{-- Validation Errors --}}
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    {{-- Login Form --}}
+                    <form action="{{ route('do_login') }}" method="POST">
+                        @csrf
+
+                        <div class="mb-3">
+                            <label class="form-label">Email:</label>
+                            <input type="email" class="form-control" name="email" placeholder="Enter your email" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Password:</label>
+                            <input type="password" class="form-control" name="password" placeholder="Enter your password" required>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-3">
+                            <a href="{{ route('forgot_password') }}" class="text-decoration-none">Forgot Password?</a>
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </form>
+
+                    <hr>
+
+                    <div class="text-center mb-3">Or login with:</div>
+
+                    {{-- Social Login Buttons with Icons --}}
+                    <div class="d-grid gap-2">
+                        <a href="{{ route('login_with_google') }}" class="btn btn-outline-danger d-flex align-items-center justify-content-center gap-2">
+                            <img src="https://img.icons8.com/color/20/google-logo.png" alt="Google Logo">
+                            <span>Login with Google</span>
+                        </a>
+                        <a href="{{ route('login_with_facebook') }}" class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2">
+                            <img src="https://img.icons8.com/fluency/20/facebook-new.png" alt="Facebook Logo">
+                            <span>Login with Facebook</span>
+                        </a>
+                        <a href="{{ route('login_with_github') }}" class="btn btn-outline-dark d-flex align-items-center justify-content-center gap-2">
+                            <img src="https://img.icons8.com/ios-glyphs/20/000000/github.png" alt="GitHub Logo">
+                            <span>Login with GitHub</span>
+                        </a>
+                        <a href="{{ route('login_with_linkedin') }}" class="btn btn-outline-info d-flex align-items-center justify-content-center gap-2">
+                            <img src="https://img.icons8.com/color/20/linkedin.png" alt="LinkedIn Logo">
+                            <span>Login with LinkedIn</span>
+                        </a>
+                    </div>
+                    <div class="text-center">
+                            Create Account: <a href="{{ route('register') }}" class="text-decoration-none">register here</a>
+                        </div>
+
+                </div>
+            </div>
+
         </div>
-        @endforeach
-      </div>
-      <div class="form-group mb-2">
-        <label for="model" class="form-label">Email:</label>
-        <input type="email" class="form-control" placeholder="email" name="email" required>
-      </div>
-      <div class="form-group mb-2">
-        <label for="model" class="form-label">Password:</label>
-        <input type="password" class="form-control" placeholder="password" name="password" required>
-      </div>
-      <a href="{{ route('forgot_password') }}" class="btn btn-link">Forgot Password?</a>
-      <div class="form-group mb-2">
-        <button type="submit" class="btn btn-primary">Login</button>
-        <a href="{{route('login_with_google')}}" class="btn btn-success">Login with Google</a>
-        <a href="{{ route('login_with_facebook') }}" class="btn btn-success">Login with Facebook</a>
-        <a href="{{ route('login_with_github') }}" class="btn btn-success">Login with github</a>
-        <a href="{{ route('login_with_linkedin') }}" class="btn btn-success">Login with LinkedIn</a>
-      </div>
-    </form>
     </div>
-  </div>
 </div>
 @endsection
