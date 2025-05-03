@@ -429,4 +429,23 @@ class UsersController extends Controller {
         }
     }
 
+    public function loginWithCertificate(Request $request)
+    {
+        $email = emailFromLoginCertificate(); // Securely extract the email from the certificate
+
+        if ($email) {
+            $user = User::where('email', $email)->first();
+            if ($user) {
+                Auth::login($user);
+                return redirect()->intended('/');
+            } else {
+                return back()->withErrors(['email' => 'Certificate email not recognized.']);
+            }
+        }
+
+        return back()->withErrors(['certificate' => 'No valid certificate found.']);
+    }
+
+
+
 }

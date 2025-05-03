@@ -52,7 +52,7 @@
                     <div class="text-center mb-3">Or login with:</div>
 
                     {{-- Social Login Buttons with Icons --}}
-                    <div class="d-grid gap-2">
+                    <div class="d-grid gap-2 mb-3">
                         <a href="{{ route('login_with_google') }}" class="btn btn-outline-danger d-flex align-items-center justify-content-center gap-2">
                             <img src="https://img.icons8.com/color/20/google-logo.png" alt="Google Logo">
                             <span>Login with Google</span>
@@ -70,9 +70,21 @@
                             <span>Login with LinkedIn</span>
                         </a>
                     </div>
-                    <div class="text-center">
-                            Create Account: <a href="{{ route('register') }}" class="text-decoration-none">register here</a>
+                    <div class="text-center mb-3">Certificate Login:</div>
+                    {{-- Login with Certificate Button --}}
+                    <form action="{{ route('login.certificate') }}" method="POST">
+                        @csrf
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-outline-success d-flex align-items-center justify-content-center gap-2">
+                                <img src="https://img.icons8.com/ios-filled/20/000000/certificate.png" alt="Certificate Icon">
+                                <span>Certificate</span>
+                            </button>
                         </div>
+                    </form>
+
+                    <div class="text-center">
+                        Create Account: <a href="{{ route('register') }}" class="text-decoration-none">register here</a>
+                    </div>
 
                 </div>
             </div>

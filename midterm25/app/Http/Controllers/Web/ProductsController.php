@@ -21,11 +21,7 @@ class ProductsController extends Controller {
 
 	public function list(Request $request) {
 
-		$email = emailFromLoginCertificate();
-		if($email && !auth()->user()) {
-				$user = User::where('email', $email)->first();
-				if($user) Auth::setUser($user);
-			}
+		
 
 		$query = Product::select("products.*");
 

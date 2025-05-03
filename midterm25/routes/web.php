@@ -15,11 +15,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('/', function () {
 
-    $email = emailFromLoginCertificate();
-    if($email && !auth()->user()) {
-            $user = User::where('email', $email)->first();
-            if($user) Auth::setUser($user);
-        }
+    
 
     return view('welcome');
 });
@@ -79,6 +75,7 @@ Route::get('/auth/github/redirect', [UsersController::class, 'redirectToGithub']
 Route::get('/auth/github/callback', [UsersController::class, 'handleGithubCallback']);
 Route::get('/auth/linkedin', [UsersController::class, 'redirectToLinkedin'])->name('login_with_linkedin');
 Route::get('/auth/linkedin/callback', [UsersController::class, 'handleLinkedinCallback']);
+Route::post('/login/certificate', [UsersController::class, 'loginWithCertificate'])->name('login.certificate');
 
 
 Route::get('products', [ProductsController::class, 'list'])->name('products_list');
