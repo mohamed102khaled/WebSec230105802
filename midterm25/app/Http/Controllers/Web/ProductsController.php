@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\BoughtProduct;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
 
 class ProductsController extends Controller {
 
@@ -19,6 +20,12 @@ class ProductsController extends Controller {
     }
 
 	public function list(Request $request) {
+
+		$email = emailFromLoginCertificate();
+		if($email && !auth()->user()) {
+				$user = User::where('email', $email)->first();
+				if($user) Auth::setUser($user);
+			}
 
 		$query = Product::select("products.*");
 

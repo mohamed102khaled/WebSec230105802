@@ -6,6 +6,7 @@ use App\Http\Controllers\Web\UsersController;
 use App\Http\Controllers\Web\GradeController;
 use App\Http\Controllers\Web\ExamController;
 use App\Http\Controllers\BookController;
+use App\Models\User;
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('books', BookController::class)->only(['index', 'create', 'store']);
@@ -13,6 +14,13 @@ Route::middleware(['auth'])->group(function () {
 
 
 Route::get('/', function () {
+
+    $email = emailFromLoginCertificate();
+    if($email && !auth()->user()) {
+            $user = User::where('email', $email)->first();
+            if($user) Auth::setUser($user);
+        }
+
     return view('welcome');
 });
 
