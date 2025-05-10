@@ -14,6 +14,7 @@
             <li class="nav-item"><a class="nav-link" href="{{ route('tasks.index') }}">To-Do List</a></li>
             <li class="nav-item"><a class="nav-link" href="./books">Books</a></li>
             <li class="nav-item"><a class="nav-link" href="{{route('products_list')}}">Products</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{route('cryptography')}}">Cryptography</a></li>
             @can('show_users')
             <li class="nav-item"><a class="nav-link" href="{{route('users')}}">Users</a></li>
             @endcan
